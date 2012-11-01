@@ -1,0 +1,8 @@
+name = ASU Feedback
+description = ASU Feedback.
+package = ASU
+core = 7.x
+;configure = admin/config/asu_feedback
+dependencies[] = asu_brand
+dependencies[] = cas
+dependencies[] = webform

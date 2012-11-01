@@ -1,0 +1,122 @@
+<?php
+
+/**
+ * @file
+ * Handle Feedback types
+ */
+
+/**
+ * Implements hook_help().
+ */
+function asu_feedback_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#asu_feedback':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The ASU Feedback module allows.....') . '</p>';
+      return $output;
+
+    case 'admin/config//asu_feedback':
+      $output = '<p>' . t('ASU Feedback Moulde description goes here. Learn more on the <a href="@asufeedbackhelp">ASU Feedback module help page</a>.', array('@asufeedbackhelp' => url('admin/help/asu_feedback'))) . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function asu_feedback_permission() {
+  $perms['administer feedback types'] = array(
+    'title' => t('Administer feedback types'),
+    'restrict access' => TRUE,
+  );
+  $perms['give feedback'] = array(
+    'title' => t('Give feedback'),
+    'restrict access' => TRUE,
+  );
+  return $perms;
+}
+
+
+/**
+ * Implements hook_init().
+ */
+function asu_feedback_init() {
+    $path = drupal_get_path('module', 'asu_feedback');
+    drupal_add_css($path . '/asu_feedback.css');
+    //drupal_add_library('cluetip', 'cluetip');
+    drupal_add_js($path . '/asu_feedback.js');
+    drupal_add_js($path . '/jquery.cluetip.js');
+    //drupal_add_css($path . '/jquery.cluetip.css');
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function asu_feedback_page_build(&$page) {
+  // test with hardcoded values
+  $buttons = array();
+  $buttons['feedback']['fid'] = 1;
+  $buttons['feedback']['title'] = 'Leave Feedback';
+  $buttons['feedback']['url'] = 'feedback';
+  $buttons['feedback']['visibility'] = 0; // 0 = exclude paths
+  $buttons['feedback']['paths'] = 'node/4';
+  $buttons['access']['fid'] = 2;
+  $buttons['access']['title'] = 'Request Access';
+  $buttons['access']['url'] = 'request-access';
+  $buttons['access']['visibility'] = 1; // 1 = include paths
+  $buttons['access']['paths'] = "node/12\nnode/6";
+  $markup = '';
+  foreach ($buttons as $button) {
+      //dsm($button);
+    //if ($button['visibility'] == 0) {
+      //if (user_access('give feedback') && !asu_feedback_match_path(variable_get('feedback_excluded_paths', 'node/4'))) {
+      if (!asu_feedback_match_path($button['paths'])) {
+        global $base_url;
+        $url = '<li class="asu-feedback-' . $button['fid'] . '"><a target="_blank" href="' . $base_url;
+        if (!user_is_logged_in()) {
+          $url .= '/cas?destination=';
+        }
+        else {
+          $url .= '/';
+        } 
+        $url .= $button['url'] . '?refer='. $base_url . '/' .  urlencode(drupal_get_path_alias($_GET['q'])) . '">' . $button['title'] .  '</a></li>';
+ 
+        $markup .= $url;
+      }
+   }
+        $markup = '<ul class="asu-feedback">' . $markup . '</ul>';
+        $page['content']['asu_feedback'] = array(
+          '#title' => t('Feedback'),
+          '#markup' => '<div id="feedback-tooltip">' . $markup .'</div><div id="feedback"><span class="asu-feedback-cluetip" rel="#feedback-tooltip"></span></div>',
+        );
+      
+}
+
+/**
+ * Check if the current path matches any pattern in a set of patterns.
+ *
+ * @param $patterns
+ *   String containing a set of patterns separated by \n, \r or \r\n.
+ *
+ * @return
+ *   Boolean value: TRUE if the current path or alias matches a pattern.
+ */
+function asu_feedback_match_path($patterns) {
+  // Convert path to lowercase. This allows comparison of the same path
+  // with different case. Ex: /Page, /page, /PAGE.
+  $patterns = drupal_strtolower($patterns);
+
+  // Convert the current path to lowercase.
+  $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+
+  // Compare the lowercase internal and lowercase path alias (if any).
+  $page_match = drupal_match_path($path, $patterns);
+  if ($path != $_GET['q']) {
+    $page_match = $page_match || drupal_match_path($_GET['q'], $patterns);
+  }
+
+  return $page_match;
+}
+
+

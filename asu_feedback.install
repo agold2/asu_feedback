@@ -1,0 +1,95 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the asu_feedback module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function asu_feedback_schema() {
+  $schema['asu_feedback'] = array(
+    'description' => 'Table that maps feedback button paths to webform',
+    'fields' => array(
+      'fid' => array(
+        'description' => 'A unique path alias identifier.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => '',
+      ),
+      'webform_path' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Path to webform',
+      ),
+      'visibility' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Flag to indicate how to show blocks on pages. (0 = Show on all pages except listed pages, 1 = Show only on listed pages, 2 = Use custom PHP code to determine visibility)',
+      ),
+    /*  'pages' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'Contents of the "Pages" block; contains either a list of paths on which to include/exclude the block or PHP code, depending on "visibility" setting.',
+      ),*/
+      'weight' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Weight of link.',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Button enabled status. (1 = enabled, 0 = disabled)',
+      ),
+    ),
+    'primary key' => array('fid'),
+    'indexes' => array(
+      'list' => array('weight', 'name', 'fid'),
+    ),
+  );
+
+  $schema['cache_asu_feedback'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_asu_feedback']['description'] = 'Cache table for the ASU Feedback module to store already built Feedback, identified by  .';
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function asu_feedback_install() {
+  // Add default Feedback and Request Access.
+   $rows = array(
+    array('name' => st('Feedback'), 'webform_path' => ('feedback'), 'visibility' => 0,'weight' => 0, 'status' => 1),  
+    array('name' => st('Request Access'), 'webform_path' => ('request_access'), 'visibility' => 0,'weight' => 0, 'status' => 1),  
+);
+if (db_table_exists('asu_feedback')) {
+    foreach ($rows as $row) {
+      db_insert('asu_feedback')->fields($row)->execute();
+    }
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Remove all asu_feedback data when the module is uninstalled.
+ */
+function asu_feedback_uninstall() {
+  db_drop_table('asu_feedback');
+}
+

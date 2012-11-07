@@ -8,9 +8,9 @@
          sticky: true,
          mouseOutClose: 'both', 
          closePosition: 'none',
-         positionBy: 'topBottom', 
-         topOffset:  0,
-         leftOffset: 0,
+         positionBy: 'fixed', 
+         topOffset:  -64,
+         leftOffset: -125,
          snapToEdge: true,        
          width: 124,
          showTitle: false

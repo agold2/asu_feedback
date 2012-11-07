@@ -11,7 +11,7 @@
 }
 
 #feedback-tooltip {
-  float: right;
+  /*float: right;*/
   clear: both;
   padding: 0 5px;
   border: solid 1px #cacaca;

@@ -22,6 +22,24 @@ function asu_feedback_help($path, $arg) {
   }
 }
 
+
+/**
+ * Implements hook_menu().
+ */
+function asu_feedback_menu() {
+  return array(
+    'admin/settings/asu_feedback' => array(
+      'title' => 'ASU Feedback',
+      'description' => 'Configure visibility of feedback options',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('asu_feedback_admin_settings'),
+      'access arguments' => array('administer feedback types'),
+     'file' => 'asu_feedback.admin.inc',
+    ),
+  );
+}
+
+
 /**
  * Implements hook_permission().
  */
@@ -44,9 +62,8 @@ function asu_feedback_permission() {
 function asu_feedback_init() {
     $path = drupal_get_path('module', 'asu_feedback');
     drupal_add_css($path . '/asu_feedback.css');
-    //drupal_add_library('cluetip', 'cluetip');
     drupal_add_js($path . '/asu_feedback.js');
-    drupal_add_js($path . '/jquery.cluetip.js');
+    drupal_add_js($path . '/cluetip/jquery.cluetip.js');
     //drupal_add_css($path . '/jquery.cluetip.css');
 }
 
@@ -60,17 +77,14 @@ function asu_feedback_page_build(&$page) {
   $buttons['feedback']['title'] = 'Leave Feedback';
   $buttons['feedback']['url'] = 'feedback';
   $buttons['feedback']['visibility'] = 0; // 0 = exclude paths
-  $buttons['feedback']['paths'] = 'node/4';
+  $buttons['feedback']['paths'] = variable_get('asu_feedback_paths', '');
   $buttons['access']['fid'] = 2;
   $buttons['access']['title'] = 'Request Access';
   $buttons['access']['url'] = 'request-access';
-  $buttons['access']['visibility'] = 1; // 1 = include paths
-  $buttons['access']['paths'] = "node/12\nnode/6";
+  $buttons['access']['visibility'] =1; // 1 = include paths
+  $buttons['access']['paths'] = variable_get('asu_feedback_access', '');
   $markup = '';
   foreach ($buttons as $button) {
-      //dsm($button);
-    //if ($button['visibility'] == 0) {
-      //if (user_access('give feedback') && !asu_feedback_match_path(variable_get('feedback_excluded_paths', 'node/4'))) {
       if (!asu_feedback_match_path($button['paths'])) {
         global $base_url;
         $url = '<li class="asu-feedback-' . $button['fid'] . '"><a target="_blank" href="' . $base_url;
@@ -83,14 +97,64 @@ function asu_feedback_page_build(&$page) {
         $url .= $button['url'] . '?refer='. $base_url . '/' .  urlencode(drupal_get_path_alias($_GET['q'])) . '">' . $button['title'] .  '</a></li>';
  
         $markup .= $url;
-      }
+     }
    }
         $markup = '<ul class="asu-feedback">' . $markup . '</ul>';
         $page['content']['asu_feedback'] = array(
           '#title' => t('Feedback'),
-          '#markup' => '<div id="feedback-tooltip">' . $markup .'</div><div id="feedback"><span class="asu-feedback-cluetip" rel="#feedback-tooltip"></span></div>',
+	  '#markup' => '<div id="feedback"><span class="asu-feedback-cluetip" rel="#feedback-tooltip"></span></div><div id="feedback-tooltip">' . $markup .'</div>',
         );
       
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ *
+ * Adds link field to related Help article to the node form.
+ *
+ * @see asu_feedback_node_submit()
+ */
+function asu_feedback_form_node_form_alter(&$form, $form_state) {
+  //$link = $form['#node']->menu;
+  //$type = $form['#node']->type;
+/*
+  $form['help'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Menu settings'),
+    '#access' => user_access('administer menu'),
+    '#collapsible' => TRUE,
+    '#collapsed' => !$link['link_title'],
+    '#group' => 'additional_settings',
+    '#attached' => array(
+      'js' => array(drupal_get_path('module', 'menu') . '/menu.js'),
+    ),
+    '#tree' => TRUE,
+    '#weight' => -2,
+    '#attributes' => array('class' => array('menu-link-form')),
+  );
+ */
+  $form['help']['enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Provide a menu link'),
+    '#default_value' => (int) (bool) $link['mlid'],
+  );
+  /*
+  $form['menu']['link'] = array(
+    '#type' => 'container',
+    '#parents' => array('menu'),
+    '#states' => array(
+      'invisible' => array(
+        'input[name="menu[enabled]"]' => array('checked' => FALSE),
+      ),
+    ),
+  );
+   */
+  $form['help']['link'] = array(
+      '#type' => 'textfield',
+    '#title' => t('Help link'),
+    '#default_value' => $link['link_title'],
+  );
+
 }
 
 /**

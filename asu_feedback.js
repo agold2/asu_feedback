@@ -3,10 +3,14 @@
      attach: function(context, settings) {
        $('.asu-feedback-cluetip').cluetip({
          local:true, 
-         positionBy: 'topBottom', 
          dropShadow: false, 
-         mouseOutClose: 'link', 
-         delayedClose:99000, 
+         cursor: 'pointer',
+         sticky: true,
+         mouseOutClose: 'both', 
+         positionBy: 'topBottom', 
+         topOffset:  0,
+         leftOffset: 0,
+         snapToEdge: true,        
          width: 124,
          showTitle: false
        });

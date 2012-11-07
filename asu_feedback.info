@@ -1,8 +1,8 @@
 name = ASU Feedback
-description = ASU Feedback.
+description = Control pages where users can Leave Feedback, Request Access, and find Help 
 package = ASU
 core = 7.x
-;configure = admin/config/asu_feedback
-dependencies[] = asu_brand
-dependencies[] = cas
-dependencies[] = webform
+configure = admin/config/asu_feedback
+;dependencies[] = asu_brand
+;dependencies[] = cas
+;dependencies[] = webform

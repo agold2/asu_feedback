@@ -7,12 +7,14 @@
          cursor: 'pointer',
          sticky: true,
          mouseOutClose: 'both', 
+         closePosition: 'none',
          positionBy: 'topBottom', 
          topOffset:  0,
          leftOffset: 0,
          snapToEdge: true,        
          width: 124,
          showTitle: false
+	 
        });
      }
    }

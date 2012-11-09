@@ -16,7 +16,7 @@ function asu_feedback_help($path, $arg) {
       $output .= '<p>' . t('The ASU Feedback module allows.....') . '</p>';
       return $output;
 
-    case 'admin/config//asu_feedback':
+    case 'admin/config/asu_feedback':
       $output = '<p>' . t('ASU Feedback Moulde description goes here. Learn more on the <a href="@asufeedbackhelp">ASU Feedback module help page</a>.', array('@asufeedbackhelp' => url('admin/help/asu_feedback'))) . '</p>';
       return $output;
   }
@@ -28,7 +28,7 @@ function asu_feedback_help($path, $arg) {
  */
 function asu_feedback_menu() {
   return array(
-    'admin/settings/asu_feedback' => array(
+    'admin/config/asu_feedback' => array(
       'title' => 'ASU Feedback',
       'description' => 'Configure visibility of feedback options',
       'page callback' => 'drupal_get_form',
@@ -62,48 +62,88 @@ function asu_feedback_permission() {
 function asu_feedback_init() {
     $path = drupal_get_path('module', 'asu_feedback');
     drupal_add_css($path . '/asu_feedback.css');
+    drupal_add_library('cluetip', 'cluetip');
     drupal_add_js($path . '/asu_feedback.js');
-    drupal_add_js($path . '/cluetip/jquery.cluetip.js');
-    //drupal_add_css($path . '/jquery.cluetip.css');
 }
 
 /**
  * Implements hook_page_build().
  */
 function asu_feedback_page_build(&$page) {
-  // test with hardcoded values
-  $buttons = array();
-  $buttons['feedback']['fid'] = 1;
-  $buttons['feedback']['title'] = 'Leave Feedback';
-  $buttons['feedback']['url'] = 'feedback';
-  $buttons['feedback']['visibility'] = 0; // 0 = exclude paths
-  $buttons['feedback']['paths'] = variable_get('asu_feedback_paths', '');
-  $buttons['access']['fid'] = 2;
-  $buttons['access']['title'] = 'Request Access';
-  $buttons['access']['url'] = 'request-access';
-  $buttons['access']['visibility'] =1; // 1 = include paths
-  $buttons['access']['paths'] = variable_get('asu_feedback_access', '');
-  $markup = '';
-  foreach ($buttons as $button) {
-      if (!asu_feedback_match_path($button['paths'])) {
-        global $base_url;
-        $url = '<li class="asu-feedback-' . $button['fid'] . '"><a target="_blank" href="' . $base_url;
-        if (!user_is_logged_in()) {
-          $url .= '/cas?destination=';
-        }
-        else {
-          $url .= '/';
-        } 
-        $url .= $button['url'] . '?refer='. $base_url . '/' .  urlencode(drupal_get_path_alias($_GET['q'])) . '">' . $button['title'] .  '</a></li>';
+	$buttons = array(
+	  0 => array(
+      'fid' => 1,
+       'title' => 'Leave Feedback',
+       'url' => 'feedback',
+       'visibility' => variable_get('asu_feedback_visibility', ''),
+			 'paths' => variable_get('asu_feedback_paths', ''),
+		),
+		1 => array(
+		  'fid' => 2,				
+			'title' => 'Request Access',
+			'url' => 'request-access',
+			'visibility' => variable_get('asu_feedback_access_visibility', ''),
+      'paths' => variable_get('asu_feedback_access', ''),
+		),
+	);
+
+  $help_nid = variable_get('asu_feedback_help_nid', '');
+  $help_link = variable_get('asu_feedback_help_link', '');
+	if ($help_link) {
+	  $buttons[] = array(				
+		    'fid' => 3,				
+			  'title' => 'Help',
+			  'url' => $help_link,
+			  'visibility' => 1, // TODO: Remove
+			  'paths' => $help_nid, // TODO: Remove
+      );
+	}
  
-        $markup .= $url;
-     }
-   }
-        $markup = '<ul class="asu-feedback">' . $markup . '</ul>';
-        $page['content']['asu_feedback'] = array(
-          '#title' => t('Feedback'),
-	  '#markup' => '<div id="feedback"><span class="asu-feedback-cluetip" rel="#feedback-tooltip"></span></div><div id="feedback-tooltip">' . $markup .'</div>',
-        );
+  //$path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+  //if ($path == $help_nid 
+    //SELECT help_link from {help_link} where nid = current_path;
+    //$url = '<li class="asu-feedback-help">' ;
+  $i = 0;
+  $links = array();
+  $items = array();
+  $class = 'asu-feedback';
+	$cas = '';
+  if (!user_is_logged_in()) {
+    $cas = 'cas?destination=';
+  }
+  foreach ($buttons as $b) {
+    if (asu_feedback_match_path($b['paths'], $b['visibility'])) {
+      global $base_url;
+      $url = $base_url . '/' . $cas . $b['url'];
+
+      $li_class = array($i => $class . '-' . $b['fid']);
+      $options = array(
+        'attributes' => array('target'=>'_blank'), 
+        'query' => array(
+	        'refer' => $base_url . '/' . urlencode(drupal_get_path_alias($_GET['q'])),
+	      ),
+      );
+      $links[] =  l($b['title'], $url, $options);
+      $items[] = array(
+	      'data' => $links[$i],
+	      'class' => $li_class);
+
+      $i++;
+    }
+  }
+
+  if ($i == 0) { 
+    return FALSE; 
+  }
+
+  $output = theme('item_list', array('items' => $items, 'attributes' => array('class' =>  $class) ));
+
+  $page['content']['asu_feedback'] = array(
+    '#title' => t('Feedback'),
+    '#markup' => $output,
+    '#prefix' => '<div id="asu-feedback-button"><span class="' . $class . '-cluetip"' . ' rel="#' . $class.'-tooltip"></span></div><div id="' . $class . '-tooltip">',
+    '#suffix' => '</div>',
+  );
       
 }
 
@@ -114,8 +154,8 @@ function asu_feedback_page_build(&$page) {
  *
  * @see asu_feedback_node_submit()
  */
-function asu_feedback_form_node_form_alter(&$form, $form_state) {
-  //$link = $form['#node']->menu;
+
+//function asu_feedback_form_node_form_alter(&$form, $form_state) {
   //$type = $form['#node']->type;
 /*
   $form['help'] = array(
@@ -133,11 +173,6 @@ function asu_feedback_form_node_form_alter(&$form, $form_state) {
     '#attributes' => array('class' => array('menu-link-form')),
   );
  */
-  $form['help']['enabled'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Provide a menu link'),
-    '#default_value' => (int) (bool) $link['mlid'],
-  );
   /*
   $form['menu']['link'] = array(
     '#type' => 'container',
@@ -149,13 +184,20 @@ function asu_feedback_form_node_form_alter(&$form, $form_state) {
     ),
   );
    */
+/*
   $form['help']['link'] = array(
       '#type' => 'textfield',
     '#title' => t('Help link'),
-    '#default_value' => $link['link_title'],
   );
 
 }
+
+function asu_feedback_node_submit($form, &$form_state) {
+  variable_set('asu_feedback_help_link', $form_state['help']['link']['#value']);
+  variable_set('asu_feedback_help_nid', $form->nid);
+
+}
+ */
 
 /**
  * Check if the current path matches any pattern in a set of patterns.
@@ -163,10 +205,13 @@ function asu_feedback_form_node_form_alter(&$form, $form_state) {
  * @param $patterns
  *   String containing a set of patterns separated by \n, \r or \r\n.
  *
+ * @param $visibility
+ *   1 to include paths, 0 to exclude paths 
+ *
  * @return
  *   Boolean value: TRUE if the current path or alias matches a pattern.
  */
-function asu_feedback_match_path($patterns) {
+function asu_feedback_match_path($patterns, $visibility) {
   // Convert path to lowercase. This allows comparison of the same path
   // with different case. Ex: /Page, /page, /PAGE.
   $patterns = drupal_strtolower($patterns);
@@ -179,8 +224,15 @@ function asu_feedback_match_path($patterns) {
   if ($path != $_GET['q']) {
     $page_match = $page_match || drupal_match_path($_GET['q'], $patterns);
   }
-
-  return $page_match;
+  
+  if (($visibility) && ($page_match)) {
+    return 1;
+  }
+  elseif (($visibility == 0) && ($page_match == 0)) {
+    return 1;
+  }
+  else {
+    return 0;
+  }
 }
-
 

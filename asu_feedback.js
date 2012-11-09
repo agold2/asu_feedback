@@ -1,6 +1,8 @@
  (function ($) {
+
    Drupal.behaviors.cluetip = {
      attach: function(context, settings) {
+     var cluetipHeight = $('#asu-feedback-tooltip').height(); 
        $('.asu-feedback-cluetip').cluetip({
          local:true, 
          dropShadow: false, 
@@ -9,12 +11,12 @@
          mouseOutClose: 'both', 
          closePosition: 'none',
          positionBy: 'fixed', 
-         topOffset:  -64,
-         leftOffset: -125,
+         topOffset:  -(cluetipHeight - 21),
+         leftOffset: -127,
          snapToEdge: true,        
-         width: 124,
-         showTitle: false
-	 
+         width: 127,
+         showTitle: false,
+	 cluetipClass: 'asu-feedback'
        });
      }
    }

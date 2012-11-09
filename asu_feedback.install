@@ -1,0 +1,182 @@
+<?php
+/* 
+ * Impements hook_info()
+ */
+function asu_feedback_node_info() {
+  return array(
+    'asu_feedback' => array(
+      'name' => t('ASU Feedback'),
+      'base' => 'node_content',
+      'description' => t('A webform-enabled content type used by the ASU Feedback module.'),
+			'has_title' => TRUE,
+			'locked' => TRUE,
+		),
+  );
+}
+
+/*
+  // Create content type if it doesn't exist
+  if (!in_array('asu_feedback', node_type_get_names())) {
+    $type = node_type_set_defaults($type);
+    node_type_save($type);
+    node_add_body_field($type);
+  }
+ */
+
+
+function asu_feedback_install() {
+  // Ensure the asu_feedback content type is available.
+	node_types_rebuild();
+	$types = node_type_get_types();
+	node_add_body_field($types['asu_feedback']);
+
+  // Enable webform on new content type
+  $webform_types = webform_variable_get('webform_node_types');
+  $webform_types[] = 'asu_feedback';
+  variable_set('webform_node_types', $webform_types);
+
+
+  $i = 0;
+	$types = array(
+	  0 => array(
+      'fid' => 1,
+       'title' => 'Leave Feedback',
+			 'body' => 'Your opinions and comments are very important to us, and we read every message that we receive. Due to a high volume of messages, we’re not always able to provide a personal response, but we do appreciate your taking the time to fill out our feedback form below.', 
+      'submit_limit' => 0,
+		),
+		1 => array(
+		  'fid' => 2,				
+			'title' => 'Request Access',
+			'body' => 'Please request access to manage a page below.',
+      'submit_limit' => 1,
+		),
+	);
+
+	foreach ($types as $type) {
+    // Create the webform components array.
+	  $components = array();
+    $components[$i] = array(
+    'cid' => $i,
+    'pid' => '0',
+    'form_key' => 'asu_feedback_' . $i,
+    'name' => $type['title'],
+    'type' => 'number',
+    'value' => '',
+    'extra' => array(
+    	'title_display' => 'before',
+    	'private' => 0,
+    	'type' => 'textfield',
+  	  'decimals' => '',
+     	'separator' => ',',
+    	'point' => '.',
+    	'unique' => 0,
+    	'integer' => 0,
+    	'conditional_operator' => '=',
+    	'excludezero' => 0,
+    	'field_prefix' => '',
+    	'field_suffix' => '',
+    	'description' => '',
+    	'attributes' => array(),
+    	// The number has to be positive.
+    	'min' => '0',
+    	'max' => '',
+    	'step' => '',
+    	'conditional_component' => '',
+    	'conditional_values' => '',
+    )  ,
+    'mandatory' => '0',
+    'weight' => $i,
+    'page_num' => 1,
+   );
+   $n = new stdClass();
+   $n->type = 'asu_feedback';
+   $n->title = $type['title'];
+   //$n->comment = 2;
+   // Define webform array.
+/*
+   $n->webform = array(
+     'confirmation' => '',
+     'confirmation_format' => NULL,
+     'redirect_url' => '<confirmation>',
+     'status' => '1',
+     'block' => '0',
+     'teaser' => '0',
+     'allow_draft' => '0',
+     'auto_save' => '0',
+     'submit_notice' => '1',
+     'submit_text' => '',
+     'submit_limit' => $type['submit_limit'],
+     'submit_interval' => '-1',
+     'total_submit_limit' => '-1',
+     'total_submit_interval' => '-1',
+     'record_exists' => TRUE,
+     'roles' => array(
+       // Only authenticated users can submit this webform.
+       0 => '2',
+     ),
+     'emails' => array(),
+      'components' => $components,
+    );
+    $description = $type['body'];
+    //if (!empty($description[0]['value'])) {
+      // Blah blah.
+    //}
+*/
+    // Save the node.
+    node_save($n);
+		$i++;
+
+    // You could also put something like drupal_goto('node/' . $n->nid) here if
+    // you want. My use case is different.
+  }
+}
+
+function asu_feedback_uninstall() {
+  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+	$result = db_query($sql, array(':type' => 'asu_feedback'));
+  $nids = array();
+	foreach ($result as $row) {
+	  $nids[] = $row->nid;
+	}
+  node_delete_multiple($nids);
+}
+
+
+function _add_webform_components($node) {
+  $components = array(
+    0 => array(
+      'name' => 'First name',
+      'form_key' => 'first_name',
+      'type' => 'textfield',
+      'mandatory' => 1,
+      'weight' => 1,
+      'pid' => 0
+    ),
+    1 => array(
+      'name' => 'Name',
+      'form_key' => 'name',
+      'type' => 'textfield',
+      'mandatory' => 1,
+      'weight' => 2,
+      'pid' => 0
+    ),
+  );
+
+  webform_ensure_record($node);
+  foreach($components as $component) {
+    $component['nid'] = $node->nid;
+    $component['extra']['title_display'] = 'inline';
+    $node->webform['components'][] = $component;
+    webform_component_insert($component);
+  }
+  $email = array(
+    'nid' => $node->nid,
+    'email' => 'name@example.ch',
+    'subject' => 'default',
+    'from_name' => 'default',
+    'from_address' => 'default',
+    'template' => 'default',
+    'excluded_components' => array(),
+  );
+  webform_email_insert($email);
+}

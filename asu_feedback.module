@@ -118,21 +118,25 @@ function asu_feedback_page_build(&$page) {
     $cas = 'cas?destination=';
   }
   foreach ($buttons as $b) {
+		$options = array('');
+		$url = $b['url'];
     if (asu_feedback_match_path($b['paths'], $b['visibility'])) {
-      global $base_url;
-      $url = $base_url . '/' . $cas . $b['url'];
-
       $li_class = array($i => $class . '-' . $b['fid']);
-      $options = array(
-        'attributes' => array('target'=>'_blank'), 
-        'query' => array(
-	        'refer' => $base_url . '/' . urlencode(drupal_get_path_alias($_GET['q'])),
-	      ),
-      );
-      $links[] =  l($b['title'], $url, $options);
-      $items[] = array(
-	      'data' => $links[$i],
-	      'class' => $li_class);
+			if ($b['fid'] != 3) {
+        global $base_url;
+        $url = $base_url . '/' . $cas . $b['url'];
+
+        $options = array(
+          'attributes' => array('target'=>'_blank'), 
+          'query' => array(
+	          'refer' => $base_url . '/' . urlencode(drupal_get_path_alias($_GET['q'])),
+	        ),
+        );
+			} 
+        $links[] =  l($b['title'], $url, $options);
+        $items[] = array(
+	        'data' => $links[$i],
+	        'class' => $li_class);
 
       $i++;
     }

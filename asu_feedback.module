@@ -13,7 +13,13 @@ function asu_feedback_help($path, $arg) {
     case 'admin/help#asu_feedback':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('The ASU Feedback module allows.....') . '</p>';
+      $path = drupal_get_path('module', 'asu_feedback');
+			$file_handle = fopen($path . "/README.txt", "r");
+			while (!feof($file_handle)) {
+			   $line = fgets($file_handle);
+			   $output .= $line . '<br />';
+			}
+			fclose($file_handle);
       return $output;
 
     case 'admin/config/asu_feedback':
@@ -33,7 +39,7 @@ function asu_feedback_menu() {
       'description' => 'Configure visibility of feedback options',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('asu_feedback_admin_settings'),
-      'access arguments' => array('administer feedback types'),
+      'access arguments' => array('administer feedback settings'),
      'file' => 'asu_feedback.admin.inc',
     ),
   );
@@ -44,10 +50,10 @@ function asu_feedback_menu() {
  * Implements hook_permission().
  */
 function asu_feedback_permission() {
-  $perms['administer feedback types'] = array(
-    'title' => t('Administer feedback types'),
-    'restrict access' => TRUE,
-  );
+	$perms['administer feedback settings'] = array(
+	  'title' => t('Administer feedback settings'),
+		'restrict access' => TRUE,
+	);
   $perms['give feedback'] = array(
     'title' => t('Give feedback'),
     'restrict access' => TRUE,
@@ -70,39 +76,39 @@ function asu_feedback_init() {
  * Implements hook_page_build().
  */
 function asu_feedback_page_build(&$page) {
-	$buttons = array(
-	  0 => array(
-      'fid' => 1,
+	if (isset($page['content']['system_main']['nodes'])) {
+	  $help_nid = 'node/' . key($page['content']['system_main']['nodes']);
+	  $help = current($page['content']['system_main']['nodes']);
+		if (isset($help['asu_feedback_help'])) {
+	    $help_link = $help['asu_feedback_help']['#items'][0]['display_url'];
+	    $buttons = array(				
+		  0 => array(
+		    'fid' => 3,				
+	  		'title' => 'Help',
+  			'url' => $help_link,
+  			'visibility' => 1, 
+  			'paths' => $help_nid,
+        ),
+      );
+    }
+  }
+	$buttons[] = array(
+       'fid' => 1,
        'title' => 'Leave Feedback',
        'url' => 'feedback',
        'visibility' => variable_get('asu_feedback_visibility', ''),
 			 'paths' => variable_get('asu_feedback_paths', ''),
-		),
-		1 => array(
+			 );
+	$buttons[] = array(
 		  'fid' => 2,				
 			'title' => 'Request Access',
 			'url' => 'request-access',
 			'visibility' => variable_get('asu_feedback_access_visibility', ''),
       'paths' => variable_get('asu_feedback_access', ''),
-		),
-	);
+		);
+	
 
-  $help_nid = variable_get('asu_feedback_help_nid', '');
-  $help_link = variable_get('asu_feedback_help_link', '');
-	if ($help_link) {
-	  $buttons[] = array(				
-		    'fid' => 3,				
-			  'title' => 'Help',
-			  'url' => $help_link,
-			  'visibility' => 1, // TODO: Remove
-			  'paths' => $help_nid, // TODO: Remove
-      );
-	}
  
-  //$path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
-  //if ($path == $help_nid 
-    //SELECT help_link from {help_link} where nid = current_path;
-    //$url = '<li class="asu-feedback-help">' ;
   $i = 0;
   $links = array();
   $items = array();
@@ -135,7 +141,12 @@ function asu_feedback_page_build(&$page) {
   if ($i == 0) { 
     return FALSE; 
   }
-
+/*
+	$exclude = 'request-access';
+  if (asu_feedback_match_path($exclude, 0)) {
+	  return TRUE;
+  }
+ */
   $output = theme('item_list', array('items' => $items, 'attributes' => array('class' =>  $class) ));
 
   $page['content']['asu_feedback'] = array(
@@ -146,58 +157,6 @@ function asu_feedback_page_build(&$page) {
   );
       
 }
-
-/**
- * Implements hook_form_BASE_FORM_ID_alter().
- *
- * Adds link field to related Help article to the node form.
- *
- * @see asu_feedback_node_submit()
- */
-
-//function asu_feedback_form_node_form_alter(&$form, $form_state) {
-  //$type = $form['#node']->type;
-/*
-  $form['help'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Menu settings'),
-    '#access' => user_access('administer menu'),
-    '#collapsible' => TRUE,
-    '#collapsed' => !$link['link_title'],
-    '#group' => 'additional_settings',
-    '#attached' => array(
-      'js' => array(drupal_get_path('module', 'menu') . '/menu.js'),
-    ),
-    '#tree' => TRUE,
-    '#weight' => -2,
-    '#attributes' => array('class' => array('menu-link-form')),
-  );
- */
-  /*
-  $form['menu']['link'] = array(
-    '#type' => 'container',
-    '#parents' => array('menu'),
-    '#states' => array(
-      'invisible' => array(
-        'input[name="menu[enabled]"]' => array('checked' => FALSE),
-      ),
-    ),
-  );
-   */
-/*
-  $form['help']['link'] = array(
-      '#type' => 'textfield',
-    '#title' => t('Help link'),
-  );
-
-}
-
-function asu_feedback_node_submit($form, &$form_state) {
-  variable_set('asu_feedback_help_link', $form_state['help']['link']['#value']);
-  variable_set('asu_feedback_help_nid', $form->nid);
-
-}
- */
 
 /**
  * Check if the current path matches any pattern in a set of patterns.

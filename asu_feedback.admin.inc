@@ -14,7 +14,7 @@
  *   The form structure.
  */
 function asu_feedback_admin_settings() {
-
+  global $base_url;
   $visibility_notlisted = 0;
   $visibility_listed = 1;
 
@@ -35,7 +35,7 @@ function asu_feedback_admin_settings() {
    */
   $form['system_options']['asu_feedback_visibility'] = array( 
     '#type' => 'radios',
-    '#title' => t('Show "Leave Feedback" on specific pages'),
+    '#title' => t('Show ' . l('Leave Feedback', $base_url . '/feedback') . ' on specific pages.'),
     '#options' => $options,
     '#default_value' => variable_get('asu_feedback_visibility', $visibility_notlisted),
   );
@@ -55,7 +55,7 @@ function asu_feedback_admin_settings() {
   );
   $form['system_options_n']['visibility_access'] = array( 
     '#type' => 'radios',
-    '#title' => t('Show "Request Access" on specific pages'),
+    '#title' => t('Show ' . l('Request Access', $base_url . '/request-access') . ' on specific pages.'),
     '#options' => $options,
     '#default_value' => variable_get('asu_feedback_access_visibility', $visibility_notlisted),
   );

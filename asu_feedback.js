@@ -11,7 +11,7 @@
          mouseOutClose: 'both', 
          closePosition: 'none',
          positionBy: 'fixed', 
-         topOffset:  -(cluetipHeight - 21),
+         topOffset:  -(cluetipHeight - 12),
          leftOffset: -127,
          snapToEdge: true,        
          width: 127,

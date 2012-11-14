@@ -39,19 +39,24 @@ function asu_feedback_install() {
     $instance = array(
       'field_name' => 'asu_feedback_help',
       'entity_type' => 'node',
-      'bundle' => 'article',
-      'label' => utf8_encode("Link to help page"),
+      'bundle' => 'asu_feedback',
+      'label' => t('Help Link'),
       'settings' => array(
         'title' => 'none',
         'attributes' => array(
           'target' => '_blank',
         ),
       ),
+      'display' => array(
+			  'default' => array(
+				  'label' => 'hidden', 
+					'type' => 'hidden',
+        ),
+      ),
    );
   
-	//field_default_form('node', NULL, 'asu_feedback_help', $instance, LANGUAGE_NONE, $items, $element, $form_state, 0); 
 
-   $instance = field_create_instance($instance);
+   field_create_instance($instance);
  
   }
 

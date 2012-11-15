@@ -1,5 +1,10 @@
 <?php
-/* 
+/**
+ * @file
+ * Install and uninstall functions for the ASU Feedback module.
+ */
+
+/*
  * Impements hook_info()
  */
 function asu_feedback_node_info() {
@@ -8,9 +13,9 @@ function asu_feedback_node_info() {
       'name' => t('ASU Feedback'),
       'base' => 'node_content',
       'description' => t('A webform-enabled content type used by the ASU Feedback module.'),
-			'has_title' => TRUE,
-			'locked' => TRUE,
-		),
+      'has_title' => TRUE,
+      'locked' => TRUE,
+    ),
   );
 }
 
@@ -18,7 +23,7 @@ function asu_feedback_install() {
 
   $help_field = field_info_field('asu_feedback_help');
   $instance = field_info_instance('node', 'asu_feedback_help', 'article');
- 
+
   if (empty($help_field)) {
     $help_field = array(
       'field_name' => 'asu_feedback_help',
@@ -28,7 +33,7 @@ function asu_feedback_install() {
         'title' => 'none',
         'attributes' => array(
           'target' => '_blank',
-		  	),
+        ),
 ),*/
     );
 
@@ -40,7 +45,7 @@ function asu_feedback_install() {
       'field_name' => 'asu_feedback_help',
       'entity_type' => 'node',
       'bundle' => 'asu_feedback',
-      'label' => t('Help Link'),
+      'label' => st('Help Link'),
       'settings' => array(
         'title' => 'none',
         'attributes' => array(
@@ -48,22 +53,22 @@ function asu_feedback_install() {
         ),
       ),
       'display' => array(
-			  'default' => array(
-				  'label' => 'hidden', 
-					'type' => 'hidden',
+        'default' => array(
+          'label' => 'hidden',
+          'type' => 'hidden',
         ),
       ),
-   );
-  
+    );
 
-   field_create_instance($instance);
- 
+
+  field_create_instance($instance);
+
   }
 
   // Ensure the asu_feedback content type is available.
-	node_types_rebuild();
-	$types = node_type_get_types();
-	node_add_body_field($types['asu_feedback']);
+  node_types_rebuild();
+  $types = node_type_get_types();
+  node_add_body_field($types['asu_feedback']);
 
   // Enable webform on new content type
   $webform_types = webform_variable_get('webform_node_types');
@@ -72,26 +77,26 @@ function asu_feedback_install() {
 
 
   $i = 0;
-	$types = array(
-	  0 => array(
+  $types = array(
+    0 => array(
       'fid' => 1,
-       'title' => 'Leave Feedback',
-			 'body' => 'Your opinions and comments are very important to us, and we read every message that we receive. Due to a high volume of messages, we’re not always able to provide a personal response, but we do appreciate your taking the time to fill out our feedback form below.', 
+      'title' => 'Leave Feedback',
+      'body' => 'Your opinions and comments are very important to us, and we read every message that we receive. Due to a high volume of messages, we’re not always able to provide a personal response, but we do appreciate your taking the time to fill out our feedback form below.',
       'submit_limit' => 0,
       'path' => 'feedback',
-		),
-		1 => array(
-		  'fid' => 2,				
-			'title' => 'Request Access',
-			'body' => 'Please request access to manage a page below.',
+    ),
+    1 => array(
+      'fid' => 2,
+      'title' => 'Request Access',
+      'body' => 'Please request access to manage a page below.',
       'submit_limit' => 1,
       'path' => 'request-access'
-		),
-	);
+    ),
+  );
 
-	foreach ($types as $type) {
+  foreach ($types as $type) {
     // Create the webform components array.
-	  $components = array();
+    $components = array();
     $components[$i] = array(
     'cid' => $i,
     'pid' => '0',
@@ -100,63 +105,63 @@ function asu_feedback_install() {
     'type' => 'number',
     'value' => '',
     'extra' => array(
-    	'title_display' => 'before',
-    	'private' => 0,
-    	'type' => 'textfield',
-  	  'decimals' => '',
-     	'separator' => ',',
-    	'point' => '.',
-    	'unique' => 0,
-    	'integer' => 0,
-    	'conditional_operator' => '=',
-    	'excludezero' => 0,
-    	'field_prefix' => '',
-    	'field_suffix' => '',
-    	'description' => '',
-    	'attributes' => array(),
-    	// The number has to be positive.
-    	'min' => '0',
-    	'max' => '',
-    	'step' => '',
-    	'conditional_component' => '',
-    	'conditional_values' => '',
-    )  ,
+      'title_display' => 'before',
+      'private' => 0,
+      'type' => 'textfield',
+      'decimals' => '',
+      'separator' => ',',
+      'point' => '.',
+      'unique' => 0,
+      'integer' => 0,
+      'conditional_operator' => '=',
+      'excludezero' => 0,
+      'field_prefix' => '',
+      'field_suffix' => '',
+      'description' => '',
+      'attributes' => array(),
+      // The number has to be positive.
+      'min' => '0',
+      'max' => '',
+      'step' => '',
+      'conditional_component' => '',
+      'conditional_values' => '',
+    ),
     'mandatory' => '0',
     'weight' => $i,
     'page_num' => 1,
-   );
+  );
 
-   $n = new stdClass();
-   $n->type = 'asu_feedback';
-   $n->title = $type['title'];
-   node_save($n);
+  $n = new stdClass();
+  $n->type = 'asu_feedback';
+  $n->title = $type['title'];
+  node_save($n);
 
-   $path = array();
-   $path['source'] = 'node/' . $n->nid;
-   $path['alias'] = $type['path'];
-   path_save($path);
+  $path = array();
+  $path['source'] = 'node/' . $n->nid;
+  $path['alias'] = $type['path'];
+  path_save($path);
 
-   _add_webform_components($n);
+  _add_webform_components($n);
 
-   // Do not display post information
-   variable_set(node_submitted_asu_feedback, 0);
+  // Do not display post information
+  variable_set(node_submitted_asu_feedback, 0);
 
-	$i++;
+  $i++;
 
   }
 }
 
 function asu_feedback_uninstall() {
+  /* TODO: variable_del()  */
   $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
-	$result = db_query($sql, array(':type' => 'asu_feedback'));
+  $result = db_query($sql, array(':type' => 'asu_feedback'));
   $nids = array();
-	foreach ($result as $row) {
-	  $nids[] = $row->nid;
-	}
+  foreach ($result as $row) {
+    $nids[] = $row->nid;
+  }
   node_delete_multiple($nids);
 
 
-	/* TODO: variable_del()  */
 
 }
 
@@ -197,7 +202,7 @@ function _add_webform_components($node) {
   );
 
   webform_ensure_record($node);
-  foreach($components as $component) {
+  foreach ($components as $component) {
     $component['nid'] = $node->nid;
     $node->webform['components'][] = $component;
     webform_component_insert($component);

@@ -137,7 +137,7 @@ function asu_feedback_install() {
   node_save($n);
 
   $path = array();
-  $path['source'] = 'node/' . $n->nid;
+  $path['refer'] = 'node/' . $n->nid;
   $path['alias'] = $type['path'];
   path_save($path);
 
@@ -169,8 +169,8 @@ function asu_feedback_uninstall() {
 function _add_webform_components($node) {
   $components = array(
     0 => array(
-      'name' => 'Source',
-      'form_key' => 'source',
+      'name' => 'Referring page',
+      'form_key' => 'refer',
       'type' => 'textfield',
       'weight' => 1,
       'pid' => 0,

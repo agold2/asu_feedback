@@ -1,6 +1,7 @@
 #asu-feedback-button {
   display: block;
   float: right;
+  margin-bottom: 1.5em;
 }
 
 #asu-feedback-button span {

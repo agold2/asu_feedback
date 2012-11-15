@@ -21,26 +21,16 @@ function asu_feedback_node_info() {
 
 function asu_feedback_install() {
 
-  $help_field = field_info_field('asu_feedback_help');
-  $instance = field_info_instance('node', 'asu_feedback_help', 'article');
-
-  if (empty($help_field)) {
+  if (!field_info_field('field_asu_feedback_help')) {
     $help_field = array(
       'field_name' => 'asu_feedback_help',
       'type' => 'link_field',
       'entity_types' => array('node'),
-    /*  'settings' => array(
-        'title' => 'none',
-        'attributes' => array(
-          'target' => '_blank',
-        ),
-),*/
     );
 
     $help_field = field_create_field($help_field);
   }
 
-  if (empty($instance)) {
     $instance = array(
       'field_name' => 'asu_feedback_help',
       'entity_type' => 'node',
@@ -63,7 +53,6 @@ function asu_feedback_install() {
 
   field_create_instance($instance);
 
-  }
 
   // Ensure the asu_feedback content type is available.
   node_types_rebuild();
@@ -152,7 +141,6 @@ function asu_feedback_install() {
 }
 
 function asu_feedback_uninstall() {
-  /* TODO: variable_del()  */
   $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
   $result = db_query($sql, array(':type' => 'asu_feedback'));
   $nids = array();
@@ -160,8 +148,14 @@ function asu_feedback_uninstall() {
     $nids[] = $row->nid;
   }
   node_delete_multiple($nids);
+  field_delete_field('asu_feedback_help');
+  field_purge_batch(10);
 
-
+  variable_del('asu_feedback_paths');
+  variable_del('asu_feedback_visibility');
+  variable_del('asu_feedback_access');
+  variable_del('asu_feedback_access_visibility');
+  variable_del('webform_node_types');
 
 }
 

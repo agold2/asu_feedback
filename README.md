@@ -9,20 +9,20 @@ submitted the ASURITE and referring page are submitted along with any message to
 site email address.
 
 ## Installation ##
-1) Install CAS library is installed in /sites/all/libraries
+1. Install CAS library is installed in /sites/all/libraries
    If it is insalled in /sites/all/modules/contrib/cas/CAS e.g. move the CAS
    directory to /sites/all/libraries/CAS
-1) Enable Drupal Modules: ASU Brand, CAS, Cluetip, Libraries, Link, Webform
-2) Install Cluetip Library: https://github.com/kswedberg/jquery-cluetip
-    * Upload LIbrary to sites/all/libraries and rename it cluetip
-4) Enable this module
+2. Enable Drupal Modules: ASU Brand, CAS, Cluetip, Libraries, Link, Webform
+3. Install Cluetip Library: https://github.com/kswedberg/jquery-cluetip
+   * Upload LIbrary to sites/all/libraries and rename it cluetip
+4. Enable this module
 
 ## Usage ##
-1) Enable Module
-2) Set display options at http://example.asu.edu/admin/config/asu_feedback
-3) Add existing field "Link: asu_feedback_help (Help Link)" to each content
+1. Enable Module
+2. Set display options at http://example.asu.edu/admin/config/asu_feedback
+3. Add existing field "Link: asu_feedback_help (Help Link)" to each content
   type that you would like to add a Help Link.
-4) Edit each webform to add components, change email address where form is sent, etc.
+4. Edit each webform to add components, change email address where form is sent, etc.
 
 
 ## Troubleshooting ##

@@ -14,7 +14,7 @@ function asu_feedback_help($path, $arg) {
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
       $path = drupal_get_path('module', 'asu_feedback');
-      $file_handle = fopen($path . "/README.txt", "r");
+      $file_handle = fopen($path . "/README.md", "r");
       while (!feof($file_handle)) {
         $line = fgets($file_handle);
         $output .= $line . '<br />';

@@ -29,12 +29,6 @@ function asu_feedback_install() {
       'field_name' => 'asu_feedback_help',
       'type' => 'link_field',
       'entity_types' => array('node'),
-    /*  'settings' => array(
-        'title' => 'none',
-        'attributes' => array(
-          'target' => '_blank',
-        ),
-),*/
     );
 
     $help_field = field_create_field($help_field);
@@ -149,6 +143,17 @@ function asu_feedback_install() {
   $i++;
 
   }
+  $default_exclude = <<<EOH
+    feedback
+    request-access
+    admin*
+    node/add*
+    node/*/edit
+EOH;
+  $default_exclude = preg_replace('/^\s+|\s+$/m', '', $default_exclude);
+  variable_set('asu_feedback_paths', $default_exclude);
+  variable_set('asu_feedback_access', $default_exclude);
+
 }
 
 function asu_feedback_uninstall() {

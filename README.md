@@ -26,7 +26,6 @@ site email address.
 
 
 ## Troubleshooting ##
----------------
 * The Libraries module requires that the CAS library is installed in /sites/all/libraries
 
 

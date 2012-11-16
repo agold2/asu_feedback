@@ -18,15 +18,14 @@ site email address.
 4. Enable this module
 
 ## Usage ##
-1. Enable Module
-2. Set display options at http://example.asu.edu/admin/config/asu_feedback
-3. Add existing field "Link: asu_feedback_help (Help Link)" to each content
+1. Set display options at http://example.asu.edu/admin/config/asu_feedback
+2. Add existing field "Link: asu_feedback_help (Help Link)" to each content
   type that you would like to add a Help Link.
-4. Edit each webform to add components, change email address where form is sent, etc.
+3. Edit each webform to add components, change email address where form is sent, etc.
 
 
 ## Troubleshooting ##
-* The Libraries module requires that the CAS library is installed in /sites/all/libraries
+* If CAS breaks: The Libraries module requires that the CAS library is installed in /sites/all/libraries
 
 
 

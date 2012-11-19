@@ -138,7 +138,7 @@ function asu_feedback_enable() {
   _add_webform_components($n);
 
   // Do not display post information
-  variable_set(node_submitted_asu_feedback, 0);
+  variable_set('node_submitted_asu_feedback', 0);
 
   $i++;
 

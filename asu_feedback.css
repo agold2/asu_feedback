@@ -4,15 +4,15 @@
 }
 
 #asu-feedback-button span {
-    background: url(images/feedback-1.jpg) no-repeat scroll left top transparent;
-    display: block;
-    height: 27px;
-    width: 90px;
+  background: url(images/feedback-1.jpg) no-repeat scroll left top transparent;
+  display: block;
+  height: 27px;
+  width: 90px;
 }
 
 
 #asu-feedback-button span:hover {
-    background: url(images/feedback-2.jpg) no-repeat scroll left top transparent;
+  background: url(images/feedback-2.jpg) no-repeat scroll left top transparent;
 }
 
 #asu-feedback-tooltip {
@@ -39,7 +39,6 @@
   margin-left: 0;
   padding-left: 0;
   margin: 10px 0;
-  line-height: 20px;
 }
 
 ul.asu-feedback li:hover {

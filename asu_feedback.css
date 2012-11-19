@@ -1,8 +1,3 @@
-.cluetip-asu-feedback {
-  font-size: 87.5%;
-  line-height: 1.5em;
-}
-
 #asu-feedback-button {
   display: block;
   float: right;
@@ -30,6 +25,8 @@
 .cluetip-asu-feedback {
   background: #fff;
   border: none;
+  font-size: 87.5% !important;
+  line-height: 1.5em !important;
 }
 
 .cluetip-asu-feedback .ui-cluetip-header, .cluetip-asu-feedback .ui-cluetip-content {

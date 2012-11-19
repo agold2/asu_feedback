@@ -79,10 +79,12 @@ ul.asu-feedback a {
   display: none;
 }
 
-.page-node-edit .field-name-asu-feedback-help {
+.page-node-edit .field-name-asu-feedback-help,
+.page-node-add .field-name-asu-feedback-help {
   display: block;
 }
 
-.page-node-edit .field-name-asu-feedback-help .link-field-title {
+.page-node-edit .field-name-asu-feedback-help .link-field-title,
+.page-node-add .field-name-asu-feedback-help .link-field-title {
   display: none;
 }

@@ -27,6 +27,7 @@ site email address.
 
 ## Troubleshooting ##
 * If CAS breaks: the Libraries module requires that the CAS library is installed in /sites/all/libraries
+* Note: Uninstalling will delete the *Leave Feedback* and *Request Access* webforms and the *Help Link* field.
 
 
 ###### Created by Ariel Gold - ariel.gold at Arizona State University . edu

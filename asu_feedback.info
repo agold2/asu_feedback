@@ -1,11 +1,10 @@
 name = ASU Feedback
-description = Control pages where users can Leave Feedback, Request Access, and find Help 
+description = Control pages where users can Leave Feedback, Request Access, and find Help
 package = ASU
 core = 7.x
 configure = admin/config/asu_feedback
-;version = VERSION
-;dependencies[] = asu_brand
-;dependencies[] = cas
+dependencies[] = asu_brand
+dependencies[] = cas
 dependencies[] = cluetip
 dependencies[] = link
 dependencies[] = webform

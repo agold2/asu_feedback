@@ -19,7 +19,6 @@
   /*float: right;*/
   clear: both;
   padding: 0 5px;
-  border: solid 1px #cacaca;
 }
 
 .cluetip-asu-feedback {
@@ -31,6 +30,10 @@
 
 .cluetip-asu-feedback .ui-cluetip-header, .cluetip-asu-feedback .ui-cluetip-content {
   padding: 0px;
+}
+
+.cluetip-asu-feedback .ui-cluetip-content {
+  border: solid 1px #cacaca;
 }
 
 .cluetip-asu-feedback .ui-widget-header, .cluetip-asu-feedback h3 {

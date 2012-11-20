@@ -16,11 +16,12 @@
 }
 
 #asu-feedback-tooltip {
-  /*float: right;*/
   clear: both;
-  padding: 0 5px;
 }
 
+.cluetip-asu-feedback .ui-cluetip-content {
+  border: solid 1px #cacaca;
+}
 .cluetip-asu-feedback {
   background: #fff;
   border: none;
@@ -32,9 +33,6 @@
   padding: 0px;
 }
 
-.cluetip-asu-feedback .ui-cluetip-content {
-  border: solid 1px #cacaca;
-}
 
 .cluetip-asu-feedback .ui-widget-header, .cluetip-asu-feedback h3 {
   display: none;
@@ -52,10 +50,11 @@ ul.asu-feedback li:hover {
 
 .item-list ul.asu-feedback li {
   background-repeat: no-repeat;
-  background-position: 3px 20%;
-  padding: 0 0 0 25px;
-  margin: 0 0 4px 0;
+  background-position: 7px 50%;
+  padding: 1px 0 0 29px;
+  margin: 0 0 7px 0;
 	list-style-type: none;
+  line-height: 15px;
 }
 
 li.asu-feedback-2 {

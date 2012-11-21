@@ -92,3 +92,7 @@ ul.asu-feedback a {
 .page-node-add .field-name-asu-feedback-help .link-field-title {
   display: none;
 }
+
+.nojs {
+  float: right;
+}

@@ -150,7 +150,7 @@ function asu_feedback_page_build(&$page) {
   $page['content']['asu_feedback'] = array(
     '#title' => t('Feedback'),
     '#markup' => $output,
-    '#prefix' => '<div id="asu-feedback-button" class="block"><span class="' . $class . '-cluetip"' . ' rel="#' . $class . '-tooltip"></span></div><div id="' . $class . '-tooltip">',
+    '#prefix' => '<div id="asu-feedback-button" class="block"><span class="' . $class . '-cluetip"' . ' rel="#' . $class . '-tooltip"></span></div><div id="' . $class . '-tooltip" class="nojs">',
     '#suffix' => '</div>',
   );
 

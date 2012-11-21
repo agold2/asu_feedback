@@ -1,7 +1,7 @@
  (function ($) {
-
    Drupal.behaviors.cluetip = {
      attach: function(context, settings) {
+     $('#asu-feedback-tooltip').removeClass('nojs');
      var cluetipHeight = $('#asu-feedback-tooltip').height();
        $('.asu-feedback-cluetip').cluetip({
          local:true,

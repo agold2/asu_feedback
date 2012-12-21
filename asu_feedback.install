@@ -125,17 +125,19 @@ function asu_feedback_enable() {
     'page_num' => 1,
   );
 
-  $n = new stdClass();
-  $n->type = 'asu_feedback';
-  $n->title = $type['title'];
-  node_save($n);
+  $node = new stdClass();
+  $node->type = 'asu_feedback';
+  node_object_prepare($node);
+  $node->title = $type['title'];
+  $node->language = LANGUAGE_NONE;
+  node_save($node);
 
   $path = array();
-  $path['source'] = 'node/' . $n->nid;
+  $path['source'] = 'node/' . $node->nid;
   $path['alias'] = $type['path'];
   path_save($path);
 
-  _add_webform_components($n);
+  _add_webform_components($node);
 
   // Do not display post information
   variable_set('node_submitted_asu_feedback', 0);

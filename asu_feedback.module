@@ -79,7 +79,7 @@ function asu_feedback_page_build(&$page) {
   if ($node = menu_get_object('node', 1)) {
     if (isset($page['content']['system_main']['nodes'])) {
       $help_nid = 'node/' . key($page['content']['system_main']['nodes']);
-      if ($node->asu_feedback_help['und'][0]['url']) {
+      if (isset($node->asu_feedback_help['und'][0]['url'])) {
         $help_link = $node->asu_feedback_help['und'][0]['url'];
         $buttons = array(
           0 => array(
